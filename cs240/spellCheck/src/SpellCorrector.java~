@@ -4,11 +4,6 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.io.File;
 
-/**
- * SpellCorrector
- * The one purpose of this class is to provide an API for trieDictionary and similar word generator
- *
- **/                                                                                                                                                                                                                                                                                                                      
 
 public class SpellCorrector implements ISpellCorrector{
 	
@@ -52,8 +47,5 @@ public class SpellCorrector implements ISpellCorrector{
 	public String suggestSimilarWord(String inputWord){
 	    return trieDictionary.suggestSimilarWord(inputWord);
     }
-
-
-    public String[] generate
 	
 }
