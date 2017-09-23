@@ -1,8 +1,8 @@
 package src;
-
 import java.io.IOException;
 import java.util.Scanner;
 import java.io.File;
+import java.util.TreeSet;
 
 /**
  * SpellCorrector
@@ -13,6 +13,9 @@ import java.io.File;
 public class SpellCorrector implements ISpellCorrector{
 	
     private Trie trieDictionary;
+	public SpellCorrector(){
+		trieDictionary = new Trie();
+	}
 
     /**
 	 * Tells this <code>SpellCorrector</code> to use the given file as its dictionary
@@ -21,26 +24,11 @@ public class SpellCorrector implements ISpellCorrector{
 	 * @throws IOException If the file cannot be read
 	 */
 	public void useDictionary(String dictionaryFileName) throws IOException {
-            File inputFile = new File(dictionaryFileName);
-            Scanner scanner = new Scanner(inputFile);
-            trieDictionary = new Trie();
-            while (scanner.hasNext()){
-               trieDictionary.add(scanner.next());
-            }
-
-	    // File inputFileT = new File("assets/words2.txt");
-            //Scanner scannerT = new Scanner(inputFileT);
-	    // Trie trieDictionaryT = new Trie();
-            //while (scannerT.hasNext()){
-		// trieDictionaryT.add(scannerT.next());
-	       // }
-
-	    //	if(trieDictionary.equals(trieDictionaryT) && trieDictionaryT.equals(trieDictionary)){
-	      	    //	System.out.print("equal");
-	     		//	}else{
-	    	    //	System.out.print("not equal");
-			//}
-	       	//System.out.print(trieDictionary.toString());
+		File inputFile = new File(dictionaryFileName);
+		Scanner scanner = new Scanner(inputFile);
+		while (scanner.hasNext()){
+			trieDictionary.add(scanner.next());
+		}
     }
 
 	/**
@@ -49,11 +37,29 @@ public class SpellCorrector implements ISpellCorrector{
 	 * @param inputWord
 	 * @return The suggestion or null if there is no similar word in the dictionary
 	 */
-	public String suggestSimilarWord(String inputWord){
-	    return trieDictionary.suggestSimilarWord(inputWord);
+	public String suggestSimilarWord(String word){
+		TreeSet<String> similarWords = SimilarWordGenerator.generateSimilarWords(word);
+		Trie.Node mostFrequentNode = getSuggestWordFromSet(similarWords);
+
+		if(mostFrequentNode == null){
+			TreeSet<String> moreSimilarWords = new TreeSet<String>();
+			for(String similarWord : similarWords) {
+				moreSimilarWords.addAll(SimilarWordGenerator.generateSimilarWords(similarWord));
+			}
+			mostFrequentNode = getSuggestWordFromSet(moreSimilarWords);
+		}
+
+		if(mostFrequentNode == null)return null;
+	    return trieDictionary.nodeToString(mostFrequentNode);
     }
 
-
-    public String[] generate
+	public Trie.Node getSuggestWordFromSet(TreeSet<String> possibleSimilarWords){
+		Trie.Node mostFrequentNode = null;
+		for(String similarWord : possibleSimilarWords){
+			Trie.Node tempNode = trieDictionary.find(similarWord);
+			mostFrequentNode = trieDictionary.getMostSimilarWord(mostFrequentNode, tempNode);
+		}
+		return mostFrequentNode;
+	}
 	
 }
