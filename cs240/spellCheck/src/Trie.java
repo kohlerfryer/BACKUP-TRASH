@@ -85,7 +85,7 @@ public class Trie implements ITrie{
 		if(trie == this) return true;
 		if(trie.getNodeCount() != this.nodeCount) return false;
 		if(trie.getWordCount() != this.wordCount) return false;
-		return this.isEqualTo(this.rootNode, "", trie);
+		return (Trie.isEqualTo(this.rootNode, "", trie) && Trie.isEqualTo(trie.rootNode, "", this));
     }
 
 	//iterate through all the child nodes
@@ -93,7 +93,7 @@ public class Trie implements ITrie{
 	//then continue
 	//if any of the children are different than the trees are not equal
 	//if children are all equal, check if this node is equal
-	public boolean isEqualTo(Node node, String path, Trie otherTrie){
+	static boolean isEqualTo(Node node, String path, Trie otherTrie){
 		for(Map.Entry<Character, Node> iteration : node.getChildNodes().entrySet()) {
 			Character key = iteration.getKey();
 			Node childNode = iteration.getValue();
