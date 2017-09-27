@@ -19,9 +19,8 @@ public interface IEvilHangmanGame {
 	 * 
 	 * @param dictionary Dictionary of words to use for the game
 	 * @param wordLength Number of characters in the word to guess
-	 * @param guessLimit Number guesses that a user can make
 	 */
-	public void startGame(File dictionary, Integer wordLength, Integer guessLimit);
+	public void startGame(File dictionary, int wordLength);
 	
 
 	/**
