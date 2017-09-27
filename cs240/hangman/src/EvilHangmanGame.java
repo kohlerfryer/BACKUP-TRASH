@@ -18,10 +18,10 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 	Integer guessLimit;
 
 	//todo un-change abstract file
-    public void startGame(File dictionary, Integer wordLength, Integer guessLimit){
-		this.wordLength = wordLength;
+    public void startGame(File dictionary, Integer gameWordLength, Integer guessLimit){
+		this.gameWordLength = gameWordLength;
 		this.guessLimit = guessLimit;
-		this.pattern = new Pattern(wordLength);
+		this.pattern = new Pattern(gameWordLength);
 		this.initializePossibleWords(dictionary);
 		this.printGuessesLeftText();
         commenceGameLoop();
@@ -61,18 +61,20 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 		try{
 			Scanner scanner = new Scanner(file);
 			while(scanner.hasNext()){
-				if(scanner.next().length == gameWordLength.length)
-				possibleWords.add(scanner.next());
+				String word = scanner.next();
+				if(word.length() == gameWordLength)
+				possibleWords.add(word);
 			}
 		}catch(FileNotFoundException e){
 			System.out.println("Invalid file input");
 		}
+
 	}
 
 	public void partitionWordsToBitMap(String word, Character identifiedChar){
 		StringBuilder sb = new StringBuilder();
-		for(char c : word.toCharArray){
-			if (c == identifiedChar) 
+		for(char c : word.toCharArray()){
+			if (c == identifiedChar)
 				sb.append(1);
 			else
 				sb.append(0);
@@ -81,7 +83,9 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 		if(wordBitMap.get(binaryWordRep) == null){
 			wordBitMap.put(binaryWordRep, new TreeSet<String>());
 		}
+		//System.out.println("char: " + identifiedChar + " word: " + word + " bitstring: " + sb.toString() + " bitNum: " + binaryWordRep + " mapsize: " + wordBitMap.size());
 		wordBitMap.get(binaryWordRep).add(word);
+		//System.out.println(wordBitMap.get(binaryWordRep).size());
 	}
 
     public void printGuessesLeftText(){
@@ -98,31 +102,78 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 				sb.append(" " + c);
 			}
 			sb.append("\n");
+			sb.append("Word: ");
+			sb.append(pattern.toString());
 		}
 		System.out.println(sb.toString());
     }
 
-	public Set<String> getSetWithBestPartition(){
+	public Set<String> getSetWithBestPartition(char guess){
 		// 1. Choose the group in which the letter does not appear at all.
 		// 2. If each group has the guessed letter, choose the one with the
 		// fewest letters.
+		//****lowest bit count
 		// 3. If this still has not resolved the issue, choose the one with the
 		// rightmost guessed letter.
+		//****lowest bit value
 		// 4. If there is still more than one group, choose the one with the next
 		// rightmost letter. Repeat this step (step 4) until a group is
 		// chosen.
-		Integer binaryKey;
+
+		TreeSet<Integer> bestPartitionKeySet = new TreeSet<Integer>();
 		Set<String> newPossibleWords;
-		if(wordBitMap.containsValue(0)){
-			binaryKey = 0;
-			newPossibleWords = wordBitMap.get(0);
-		}else if(){
-			loopthatSHiz
-		}else if(){
-			loopthatshiz
+		//get lowest bit count
+		//if two numbers exist in set at the end of comparison
+		//a unique set cannot be determined and next loop must run
+		
+		//get list most words
+		for(HashMap.Entry<Integer, Set<String>> iteration : wordBitMap.entrySet()) {
+			int key = iteration.getKey();
+			Set<String> wordSet = iteration.getValue();
+			if(bestPartitionKeySet.isEmpty()){
+				bestPartitionKeySet.add(key);
+			}else if(Integer.bitCount(key) < Integer.bitCount(bestPartitionKeySet.first())){
+				print(key + "<" + bestPartitionKeySet.first());
+				bestPartitionKeySet.clear();
+				bestPartitionKeySet.add(key);
+			}else if(Integer.bitCount(key) == Integer.bitCount(bestPartitionKeySet.first())){
+				print(Integer.bitCount(key) + "==" + Integer.bitCount(bestPartitionKeySet.first()));
+				bestPartitionKeySet.add(key);			
+			}
+		}
+		// System.out.print("compare" + Integer.bitCount(key) + " : " + Integer.bitCount(bestPartitionKey));
+		//get lowest bit value
+
+		//narrow down search
+		if(bestPartitionKeySet.size() > 1){
+			for(){
+				int key = iteration.getKey();
+				if(bestPartitionKeySet.isEmpty()){
+					bestPartitionKeySet.add(key);
+				}else if(Integer.bitCount(key) < Integer.bitCount(bestPartitionKeySet.first())){
+					print(key + "<" + bestPartitionKeySet.first());
+					bestPartitionKeySet.clear();
+					bestPartitionKeySet.add(key);
+				}else if(Integer.bitCount(key) == Integer.bitCount(bestPartitionKeySet.first())){
+					print(Integer.bitCount(key) + "==" + Integer.bitCount(bestPartitionKeySet.first()));
+					bestPartitionKeySet.add(key);			
+				}
+			}
+			// print("the choice set was a duplicate :(");
+			// for(HashMap.Entry<Integer, Set<String>> iteration : wordBitMap.entrySet()) {
+			// 	int key = iteration.getKey();
+			// 	if(bestPartitionKeySet.isEmpty()){
+			// 		bestPartitionKeySet.add(key);
+			// 	}else if(key < bestPartitionKeySet.first()){
+			// 		print(key + "<" + bestPartitionKeySet.first());
+			// 		bestPartitionKeySet.clear();
+			// 		bestPartitionKeySet.add(key);	
+			// 	}
+			// }
 		}
 
-		pattern.add(Integer.toBinaryString(binaryKey));
+		newPossibleWords = wordBitMap.get(bestPartitionKeySet.first());
+		pattern.addToPattern(bestPartitionKeySet.first(), guess);
 		wordBitMap.clear();
 		return newPossibleWords;
 
@@ -131,17 +182,21 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 	//make sure to clear bitmap and return new possible word set
 	}
 
-	private void addToPattern()
+	//private void addToPattern();
 
 	public Set<String> makeGuess(char guess) throws GuessAlreadyMadeException{
 		//find all words with curent guesses
 		for(String word : possibleWords){
-			partitionWordsToBitMap(guess, word);
+			partitionWordsToBitMap(word, guess);
 		}
-		possibleWords = getSetWithBestPartition();
+		possibleWords = getSetWithBestPartition(guess);
 		//change possible words
 		return null;
     }
+
+	public void print(String s){
+		System.out.println(s);
+	}
 
 
 
