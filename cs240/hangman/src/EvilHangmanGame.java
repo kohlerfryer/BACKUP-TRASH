@@ -16,24 +16,19 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 	PartitionPattern partitionPattern;
 	Integer gameWordLength;
 	Integer guessLimit;
-	Integer usedGuesses;
+	Integer usedGuesses = 0;
 
-	//todo un-change abstract file
     public void startGame(File dictionary, int wordLength){
-		this.guessLimit = guessLimit;
-		this.usedGuesses = 0;
+		this.gameWordLength = wordLength;
+		this.partitionPattern = new PartitionPattern(gameWordLength);
 		this.initializePossibleWords(dictionary);
     }
 
-	public void setRestOfGame(int gameWordLength){
-		this.gameWordLength = gameWordLength;
-		this.partitionPattern = new PartitionPattern(gameWordLength);
-	}
-
-    public void commenceGameLoop(){
-		this.printGuessesLeftText();
+    public void commenceGameLoop(int guessLimit){
+		this.guessLimit = guessLimit;
 		Scanner scanner = new Scanner(System.in);
 		String input;
+		this.printGuessesLeftText();
 		while( (guessLimit - usedGuesses) > 0 && !partitionPattern.complete()) {
 			System.out.print("Enter guess: ");
 			input = scanner.next();

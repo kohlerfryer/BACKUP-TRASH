@@ -38,9 +38,7 @@ public class Main {
 
 		EvilHangmanGame evilHangmanGame = new EvilHangmanGame();
 		evilHangmanGame.startGame(inputFile, wordLength);
-		evilHangmanGame.setRestOfGame(guessQuantity);
-		evilHangmanGame.guessLimit = guessQuantity;
-		evilHangmanGame.commenceGameLoop();
+		evilHangmanGame.commenceGameLoop(guessQuantity);
 	
 	}
 
