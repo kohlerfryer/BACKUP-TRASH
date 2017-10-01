@@ -19,8 +19,8 @@ public class PartitionPattern{
         }
     }
 
-    public boolean complete(){
-        return !(toString().contains("-"));
+    public boolean incomplete(){
+        return toString().contains("-");
     }
 
     public String toString(){

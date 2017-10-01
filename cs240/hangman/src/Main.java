@@ -5,20 +5,9 @@ import java.util.Scanner;
 import java.io.File;
 import java.util.regex.Pattern;
 
-/**
- * A simple main class for running the spelling corrector. This class is not
- * used by the passoff program.
- */
-public class Main {
-	
-	/**
-	 * Give the dictionary file name as the first argument and the word to correct
-	 * as the second argument.
-	 */
-	public static void main(String[] args) throws IOException{
 
-		// System.out.println(Integer.toBinaryString(1));
-		// System.out.println(Integer.parseInt("100", 2));
+public class Main {
+	public static void main(String[] args) throws IOException{
 
 		if(args.length != 3){
 			System.out.println("Invalid Input");
@@ -38,7 +27,12 @@ public class Main {
 
 		EvilHangmanGame evilHangmanGame = new EvilHangmanGame();
 		evilHangmanGame.startGame(inputFile, wordLength);
-		evilHangmanGame.commenceGameLoop(guessQuantity);
+		try{
+			evilHangmanGame.commenceGameLoop(guessQuantity);
+
+		}catch(GuessAlreadyMadeException e){
+			System.out.println("You already used that letter");
+		}
 	
 	}
 
