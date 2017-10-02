@@ -10,18 +10,21 @@ import java.util.regex.Pattern;
 
 public class EvilHangmanGame implements IEvilHangmanGame {
 
-	TreeSet<String> possibleWords = new TreeSet<String>();
-	TreeSet<String>[] bitMappedDictionary;
+	String[] possibleWords;
+	String[][] bitMappedDictionary;
 	//HashMap<Integer, TreeSet<String>> wordBitMap = new  HashMap<Integer, TreeSet<String>>();
 	Set<Character> guessedLetters = new TreeSet<Character>();
 	PartitionPattern partitionPattern;
 	Integer gameWordLength;
 	Integer guessLimit;
 	Integer usedGuesses = 0;
+	int arrayLength;
 
     public void startGame(File dictionary, int wordLength){
-		bitMappedDictionary = new TreeSet<String>[pow(2, wordLength+1)];
-
+		arrayLength = (int)Math.pow(wordLength, wordLength+1);
+		bitMappedDictionary = new String[arrayLength][arrayLength];
+		possibleWords = new String[arrayLength];
+		System.out.println(arrayLength);
 		this.gameWordLength = wordLength;
 		this.partitionPattern = new PartitionPattern(gameWordLength);
 		this.initializePossibleWords(dictionary);
@@ -74,15 +77,25 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 	public void initializePossibleWords(File file){
 		try{
 			Scanner scanner = new Scanner(file);
+			int i = 0;
 			while(scanner.hasNext()){
 				String word = scanner.next();
 				if(word.length() == gameWordLength)
-				possibleWords.add(word);
+				possibleWords[i++] = word;
+				// System.out.println(word);
 			}
 		}catch(FileNotFoundException e){
 			System.out.println("Invalid file input");
 		}
 
+	}
+
+	public int getArraysNextUnusedIndex(Object[] arr){
+		int i = 0;
+		for(int j = 0; j < arr.length; j++){
+			if(arr[j] == null)return j;
+		}
+		return i;
 	}
 
 	public void partitionWordsToBitmapDictionary(String word, Character identifiedChar){
@@ -94,10 +107,9 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 				sb.append(0);
 		}
 		Integer binaryWordRep = Integer.parseInt(sb.toString(), 2);
-		if(bitMappedDictionary[binaryWordRep] == null){
-			bitMappedDictionary[binaryWordRep] = new TreeSet<String>();
-		}
-		bitMappedDictionary[binaryWordRep].add(word);
+		int secondIndex =  getArraysNextUnusedIndex(bitMappedDictionary[binaryWordRep]);
+		// bitMappedDictionary[binaryWordRep].length;
+		bitMappedDictionary[binaryWordRep][secondIndex] = word;
 	}
 
     public void printGuessesLeftText(){
@@ -119,12 +131,11 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 
 	public void printWordBitMap(){
 		print("\nprinting curent bitmap");
-		for(HashMap.Entry<Integer, TreeSet<String>> iteration : wordBitMap.entrySet()) {
-			Set<String> wordSet = iteration.getValue();
-			int key = iteration.getKey();
-			System.out.print(Integer.toBinaryString(key) + " : ");
-			for(String word : wordSet){
-				System.out.print(" " + word);
+		for(int i = 0; i < getBitMappedDictionaryNonNullLength(); i++) {
+			if(bitMappedDictionary[i][0] == null)continue;
+			//System.out.print(Integer.toBinaryString(i) + " : ");
+			for(int j = 0; j < getArraysNextUnusedIndex(bitMappedDictionary[i]); j++) {
+				System.out.print("*" + bitMappedDictionary[i][j]);
 			}
 		}
 		print("");
@@ -135,7 +146,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 		int biggestWordCount = 0;
 		//get biggest set size
 		for(int i = 0; i < bitMappedDictionary.length-1; i++) {
-			if(bitMappedDictionary[i] == null)continue;
+			if(bitMappedDictionary[i][0] == null)continue;
 			removeAllButOneIndexesFromBinaryDicionary(i);
 			return;
 			// if(bitMappedDictionary[i].size() > biggestWordCount)
@@ -160,45 +171,45 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 		int lowestLetterGuessIndex = 100;
 		int lowestLetterGuessIndexSetCount = 0;
 		for(int i = 0; i < bitMappedDictionary.length-1; i++) {
-			if(bitMappedDictionary[i] == null)continue;
-			if(Ingeger.bitCount(i) < lowestLetterGuessIndex)
-				lowestLetterGuessIndex = Ingeger.bitCount(i);
+			if(bitMappedDictionary[i][0] == null)continue;
+			if(Integer.bitCount(i) < lowestLetterGuessIndex)
+				lowestLetterGuessIndex = Integer.bitCount(i);
 		}
 		//count how many sets exist with such guess index
 		for(int i = 0; i < bitMappedDictionary.length-1; i++) {
-			if(bitMappedDictionary[i] == null)continue;
-			if(Ingeger.bitCount(i) == lowestLetterGuessIndex)
+			if(bitMappedDictionary[i][0] == null)continue;
+			if(Integer.bitCount(i) == lowestLetterGuessIndex)
 				lowestLetterGuessIndexSetCount += 1;
 		}
 		//if only one set exists with that number, delete all others
 		for(int i = 0; i < bitMappedDictionary.length-1; i++) {
-			if(bitMappedDictionary[i] == null)continue;
-			if(Ingeger.bitCount(i) == lowestLetterGuessIndex)
+			if(bitMappedDictionary[i][0] == null)continue;
+			if(Integer.bitCount(i) == lowestLetterGuessIndex)
 				removeAllButOneIndexesFromBinaryDicionary(i);
 		}
 	}
 
 	private void removeAllButOneIndexesFromBinaryDicionary(int desiredIndex){
 			for(int i = 0; i < bitMappedDictionary.length-1; i++) {
-			if(bitMappedDictionary[i] == null)continue;
+			if(bitMappedDictionary[i][0] == null)continue;
 			if(i != desiredIndex)
-				bitMappedDictionary[i];
+				bitMappedDictionary[i] = new String[arrayLength];
 		}	
 	}
 
-	private void getBitMappedDictionaryNonNullLength(){
-		for(HashMap.Entry<Integer, TreeSet<String>> iteration : wordBitMap.entrySet()) {
-			int key = iteration.getKey();
-			if(key < bestPartitionKeySet.first()){
-				bestPartitionKeySet.clear();
-				bestPartitionKeySet.add(key);
-			}
-		}
-	}
+	// private void getBitMappedDictionaryNonNullLength(){
+	// 	for(HashMap.Entry<Integer, TreeSet<String>> iteration : wordBitMap.entrySet()) {
+	// 		int key = iteration.getKey();
+	// 		if(key < bestPartitionKeySet.first()){
+	// 			bestPartitionKeySet.clear();
+	// 			bestPartitionKeySet.add(key);
+	// 		}
+	// 	}
+	// }
 
 	private int getBitMappedDictionaryNonNullLength(){
 		int count = 0;
-		for (TreeSet<String> wordGroup : bitMappedDictionary) {
+		for (String[] wordGroup : bitMappedDictionary) {
 			if ( wordGroup != null ) count++;
 		}
 		return count;
@@ -206,14 +217,16 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 
 	public int getFirstNonNullDictionarySetIndex(){
 		for(int i = 0; i < bitMappedDictionary.length-1; i++) {
-			if(bitMappedDictionary[i] == null)continue;
+			if(bitMappedDictionary[i][0] == null)continue;
 				return i;
 		}
+		return 0;
 	}
 
 	public void partitionDictionaryAndSetNewPossibleWords(char guess){
 
-		removeAllSmallSetsFromBitMappedDictionary();
+		printWordBitMap();
+		removeAllGroupsWithoutFewestGuessedLetters();
 		if(getBitMappedDictionaryNonNullLength() > 1){
 			removeAllGroupsWithoutFewestGuessedLetters();
 		}
@@ -222,20 +235,20 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 		}
 
 		int newPossibleWordsIndex = getFirstNonNullDictionarySetIndex();
-		partitionPattern.addToPattern(newPossibleWordsIndex, guess);
+		partitionPattern.addToPattern(bitMappedDictionary[newPossibleWordsIndex], guess);
 		printResultMessage(newPossibleWordsIndex, guess);
 		increaseGuesses(newPossibleWordsIndex);
-		newPossibleWords = bitMappedDictionary[newPossibleWordsIndex];
-		bitMappedDictionary[newPossibleWordsIndex] = null;
+		possibleWords = bitMappedDictionary[newPossibleWordsIndex];
+		bitMappedDictionary = new String[arrayLength][arrayLength];
 	}
 
 	private void printEndGameMessage(){
-		if(partitionPattern.incomplete() == false){
+		if(partitionPattern.incomplete() == true){
 			print("You win!");
 		}
 		else{
 			print("You Lose!");
-			print("The word was: " + possibleWords.first());
+			print("The word was: " + possibleWords[0]);
 		}
 
 	}
@@ -256,11 +269,15 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 	}
 
 	public Set<String> makeGuess(char guess) throws GuessAlreadyMadeException{
-		for(String word : possibleWords){
-			partitionWordsToBitmapDictionary(word, guess);
+		Set<String> pointlessSet = new TreeSet<String>();
+		for(int i = 0; i < getArraysNextUnusedIndex(possibleWords); i++){
+			partitionWordsToBitmapDictionary(possibleWords[i], guess);
 		}
 		partitionDictionaryAndSetNewPossibleWords(guess);
-		return possibleWords;
+		for(int i = 0; i < getArraysNextUnusedIndex(possibleWords); i++){
+			pointlessSet.add(possibleWords[i]);
+		}
+		return pointlessSet;
     }
 
 	public void print(String s){

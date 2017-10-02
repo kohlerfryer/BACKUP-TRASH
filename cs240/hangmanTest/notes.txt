@@ -1,0 +1,46 @@
+//hasmap
+for(HashMap.Entry<Integer, TreeSet<String>> iteration : wordBitMap.entrySet()) {
+    iteration.getValue();
+    iteration.getKey();
+}
+remove()
+get()
+clear()
+put(key, value)
+size()
+
+//file		
+File inputFile = new File(dictionaryFileName);
+
+//pattern
+Pattern p = Pattern.compile("[^a-z]");
+  //detect pattern mismatch
+p.matcher(input).find()
+
+
+//scanner
+Scanner scanner = new Scanner(System.in);
+String.charAt(0);
+Scanner scanner = new Scanner(file);
+hasNext()
+next()
+
+
+//string methods
+.length()
+.charAt(int index)
+isEmpty()
+contains
+
+//string builder
+StringBuilder
+.append
+.toString
+
+
+//binary calculations
+Integer.toBinaryString(bit);
+Integer.parseInt(sb.toString(), 2);
+Integer.bitCount(int i)
+
+System.exit(0)

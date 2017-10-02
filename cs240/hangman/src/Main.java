@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 public class Main {
 	public static void main(String[] args) throws IOException{
 
+		// String[][] a = new String[3][3];
+		// System.out.println(a[0] == null);
+
 		if(args.length != 3){
 			System.out.println("Invalid Input");
 			System.exit(0);
@@ -30,7 +33,7 @@ public class Main {
 		try{
 			evilHangmanGame.commenceGameLoop(guessQuantity);
 
-		}catch(GuessAlreadyMadeException e){
+		}catch(IEvilHangmanGame.GuessAlreadyMadeException e){
 			System.out.println("You already used that letter");
 		}
 	
