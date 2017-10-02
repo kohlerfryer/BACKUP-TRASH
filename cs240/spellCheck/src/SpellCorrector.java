@@ -4,12 +4,6 @@ import java.util.Scanner;
 import java.io.File;
 import java.util.TreeSet;
 
-/**
- * SpellCorrector
- * The one purpose of this class is to provide an API for trieDictionary and similar word generator
- *
- **/                                                                                                                                                                                                                                                                                                                      
-
 public class SpellCorrector implements ISpellCorrector{
 	
     private Trie trieDictionary;
@@ -17,12 +11,6 @@ public class SpellCorrector implements ISpellCorrector{
 		trieDictionary = new Trie();
 	}
 
-    /**
-	 * Tells this <code>SpellCorrector</code> to use the given file as its dictionary
-	 * for generating suggestions.
-	 * @param dictionaryFileName File containing the words to be used
-	 * @throws IOException If the file cannot be read
-	 */
 	public void useDictionary(String dictionaryFileName) throws IOException {
 		File inputFile = new File(dictionaryFileName);
 		Scanner scanner = new Scanner(inputFile);
@@ -31,12 +19,6 @@ public class SpellCorrector implements ISpellCorrector{
 		}
     }
 
-	/**
-	 * Suggest a word from the dictionary that most closely matches
-	 * <code>inputWord</code>
-	 * @param inputWord
-	 * @return The suggestion or null if there is no similar word in the dictionary
-	 */
 	public String suggestSimilarWord(String word){
 		TreeSet<String> similarWords = SimilarWordGenerator.generateSimilarWords(word);
 		Trie.Node mostFrequentNode = getSuggestWordFromSet(similarWords);

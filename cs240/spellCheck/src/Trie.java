@@ -19,22 +19,12 @@ public class Trie implements ITrie{
 		this.sortedDictionarySet = new TreeSet<String>();
     }
 
-	/**
-	 * Adds the specified word to the trie (if necessary) and increments the word's frequency count
-	 * @param word The word being added to the trie
-	 */
 	public void add(String word){
         if(word.length() <= wordCharMinimum)return;
 		sortedDictionarySet.add(word);
         rootNode.add(word);
     }
 	
-	/**
-	 * searches the trie for the specified word
-	 * @param word The word being searched for
-	 * @return A reference to the trie node that represents the word,
-	 * 			or null if the word is not in the trie
-	 */
 	public Node find(String word){
 		try{
 			return rootNode.find(word);
@@ -43,29 +33,14 @@ public class Trie implements ITrie{
 		}
     }	
 	
-	/**
-	 * Returns the number of unique words in the trie
-	 * @return The number of unique words in the trie
-	 */
 	public int getWordCount(){
 		return wordCount;
     }
 	
-	/**
-	 * Returns the number of nodes in the trie
-	 * 
-	 * @return The number of nodes in the trie
-	 */
 	public int getNodeCount(){
 		return nodeCount;
-
     }
 	
-	/**
-	 * The toString specification is as follows:
-	 * For each word, in alphabetical order:
-	 * <word>\n
-	 */
 	public String toString(){
 		StringBuilder stringBuilder = new StringBuilder();
 		Iterator<String> iterator = this.sortedDictionarySet.iterator();
@@ -132,14 +107,8 @@ public class Trie implements ITrie{
 		return parentNodeString;
 	}
 
-
-	/**
-  	 * Your trie node class should implement the ITrie.INode interface
-  	 */
   	public class Node implements ITrie.INode {
-		/**
-		* allows for nice letter key indexing
-		*/
+
 		private HashMap<Character,Node> childNodes;
 		private Node parentNode;
 		private int frequency;
@@ -156,11 +125,7 @@ public class Trie implements ITrie{
 		public HashMap<Character,Node> getChildNodes(){
 			return childNodes;
 		}
-  		/**
-  		 * Returns the frequency count for the word represented by the node
-  		 *
-  		 * @return The frequency count for the word represented by the node
-  		 */
+
   		public int getValue(){
               return this.frequency;
       	}

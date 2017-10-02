@@ -27,7 +27,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 			for(char c : guessedLetters){
 				System.out.print(" " + c);
 			}
-			System.out.println("Word : " + partitionPattern.toString());
+			System.out.println("\nWord : " + partitionPattern.toString());
 			System.out.print("Enter Guess ");
 			String input = scanner.next();
 			if(!inputValid(input)){
