@@ -1,4 +1,4 @@
-rm src/*.class
+rm spell/*.class
 clear
-javac src/Main.java
-java src/Main assets/words.txt ohuset
+javac spell/Main.java
+java spell/Main assets/words.txt yeahj
