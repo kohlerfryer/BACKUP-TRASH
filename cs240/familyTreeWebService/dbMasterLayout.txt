@@ -1,0 +1,64 @@
+ — convert to MySql
+
+CREATE TABLE Person (
+   id int UNIQUE AUTO_INCREMENT,
+   first_name varchar(255) NOT NULL,
+   last_name varchar(255) NOT NULL,
+   gender char(1) NOT NULL,
+   father_id int,
+   mother_id int,
+   spouse_id int,
+   PRIMARY KEY (id),
+   CONSTRAINT check_gender CHECK (gender = ‘f’ OR gender =‘m’),
+   FOREIGN KEY(father_id) REFERENCE Person(id),
+   FOREIGN KEY(mother_id) REFERENCE Person(id),
+   FOREIGN KEY(spouse_id) REFERENCE Person(id),
+);
+
+CREATE TABLE User ( 
+    id int UNIQUE AUTO_INCREMENT,
+    person_id int NOT NULL,
+    username varchar(255) NOT NULL,
+    email varchar(255) NOT NULL, 
+    password varchar(255) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY(person_id) REFERENCE Person(id),
+);
+
+CREATE TABLE Event ( 
+    id int UNIQUE AUTO_INCREMENT,
+    lattitude int,
+    longitude int,
+    country varchar(255),
+    city varchar(255),
+    event_type_id int,
+    year YEAR,
+    PRIMARY KEY (id),
+    FOREIGN KEY(person_id) REFERENCE Person(id)
+    FOREIGN KEY(event_type_id) REFERENCE EventType(id)
+);
+
+CREATE TABLE EventType ( 
+    id int UNIQUE AUTO_INCREMENT,
+    type varchar(255),
+    PRIMARY KEY (id),
+);
+
+CREATE TABLE PersonEvent ( 
+    id int UNIQUE AUTO_INCREMENT,
+    event_id int NOT NULL,
+    person_id int NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY(event_id) REFERENCE Event(id)
+    FOREIGN KEY(person_id) REFERENCE Person(id)
+);
+
+CREATE TABLE Auth ( 
+    id int UNIQUE AUTO_INCREMENT,
+    token varchar(255) NOT NULL UNIQUE,
+    user_id int NOT NULL,
+    time_stamp timestamp NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY(user_id) REFERENCE User(id)
+);
+
