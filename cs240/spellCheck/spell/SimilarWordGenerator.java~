@@ -1,0 +1,10 @@
+
+/**
+ * SimilarWordGenerator
+ * The one purpose of this class is to generate possible similar words for user
+ *
+ **/
+
+public class SimilarWordGenerator {
+    
+}
